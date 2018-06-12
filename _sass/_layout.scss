@@ -1,0 +1,177 @@
+@font-face {
+    font-family: dinot;
+    src: url("https://www.bigelow.org/fonts/DINOT.otf")
+}
+
+body {
+    font-family: 'Open Sans';
+    background-color: #4A90E2;
+}
+
+h1 {
+    color: white;
+}
+
+h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+a,
+a:active,
+a:visited,
+a:active,
+a:focus,
+a:hover {
+    color: white !important;
+}
+
+a.bigln {
+    color: white;
+    font-size: 2.1em;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+a.bigln:hover {
+    color: #1B4D7D !important;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+p {
+    color: white !important;
+    font-family: 'Open Sans';
+    font-size: 1.2em;
+}
+
+a.btn.outline {
+    background-color: #4A90E2 !important;
+    color: white;
+    font-weight: bold;
+    border: 1px solid white;
+    text-align: center;
+}
+
+a.btn.outline:hover {
+    background-color: white !important;
+    color: #4A90E2 !important;
+}
+
+button.btn.outline {
+    background-color: #4A90E2 !important;
+    color: white;
+    font-weight: bold;
+    border: 1px solid white;
+    text-align: center;
+}
+
+button.btn.outline:hover {
+    background-color: white !important;
+    color: #4A90E2 !important;
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.navbar {
+    background-color: #4A90E2;
+    border: none;
+    margin-top: 50px;
+}
+
+a.navbar-brand {
+    font-family: 'dinot';
+    color: white !important;
+    text-decoration: none !important;
+    font-size: 4em;
+}
+
+a.navbar-brand:active,
+a.navbar-brand:visited,
+a.navbar-brand:active,
+a.navbar-brand:focus {
+    color: white !important;
+}
+
+a.navbar-brand:hover {
+    color: white !important;
+}
+
+.navbar-default .navbar-nav>li {
+    padding-top: 15px;
+}
+
+.navbar-default .navbar-nav>li>a,
+.navbar-default .navbar-nav>li>a:focus {
+    color: white !important;
+    font-size: 1.4em;
+    padding-bottom: 0;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+    color: #1B4D7D !important;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: white;
+}
+
+
+/* Aside */
+
+aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #4A90E2;
+    width: 100%;
+    z-index: 2;
+    border-bottom: 1px solid lighten($light, 30%);
+    box-shadow: 0px 1px 1px RGBA(4, 25, 54, .1);
+    nav {
+        float: left;
+        max-width: 800px;
+        margin: 0 auto;
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            li {
+                float: left;
+                position: relative;
+                a {
+                    text-decoration: none;
+                    display: block;
+                    padding: 15px;
+                    font-family: 'Muli', sans-serif;
+                    line-height: 20px;
+                    margin-bottom: -1px;
+                    box-shadow: 0;
+                    &:hover,
+                    &:active {
+                        background: #4A90E2;
+                        text-decoration: none;
+                        color: $main;
+                    }
+                }
+            }
+        }
+        &:after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+    }
+}
+
+footer {
+    text-align: center;
+    padding: 40px;
+}
