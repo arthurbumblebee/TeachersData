@@ -45,3 +45,9 @@ github_username:  arthurbumblebee
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+plugins:
+  - jekyll-paginate
+  - jekyll-assets
+assets:
+  digest: true

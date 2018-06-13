@@ -8,8 +8,52 @@ layout: default
 <div>
     <form class="form-horizontal" action="" role="form">
         <div class="row">
+            <label for="selLocation">Select location:</label>
+                <select class="form-control" id="selLocation">
+                    <option>Portland</option>
+                    <option>Waterville</option>
+                    <option>Bigelow</option>
+                </select>
             <label class="radio-inline" for="temp"><input type="radio" name="optradio">Temperature</label>
             <label class="radio-inline" for="light" ><input type="radio" name="optradio">Light Intensity</label>
         </div>
+        <div class="row">
+            <div class="form-group form-group-sm">
+                <label class="col-sm-1 control-label" for="start_date">From:</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" placeholder="MM/DD/YYY" id="start_date">
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-sm-1 control-label" for="end_date">To:</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" placeholder="MM/DD/YYY" id="end_date">
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-primary" name="submit"  type="submit">Submit</button>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    var date_input=$('input[name="start_date"]');
+                    var options={
+                        format: 'mm/dd/yyyy',
+                        container: container,
+                        todayHighlight: true,
+                        autoclose: true,
+                    };
+                    // date_input.datepicker(options);
+                    $("#start_date").datepicker(options);
+                })
+            </script>
+            <script>
+                $( function() {
+                    $( "#datepicker" ).datepicker();
+                } );
+            </script>
+            <p>Date: <input type="text" id="datepicker"></p>
+        </div>
     </form>
+    <canvas id="graph1" width="200" height="100" style="border:1px solid #ffffff; background-color: white">
+    </canvas>
 </div>
