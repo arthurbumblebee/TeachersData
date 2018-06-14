@@ -33,7 +33,7 @@ layout: default
             <div class="form-group text-center">
                 <button class="btn btn-primary" name="submit"  type="submit">Submit</button>
             </div>
-            <script type="text/javascript">
+            {% comment %} <script>
                 $(document).ready(function(){
                     var date_input=$('input[name="start_date"]');
                     var options={
@@ -50,10 +50,12 @@ layout: default
                 $( function() {
                     $( "#datepicker" ).datepicker();
                 } );
-            </script>
+            </script> {% endcomment %}
             <p>Date: <input type="text" id="datepicker"></p>
         </div>
     </form>
     <canvas id="graph1" width="200" height="100" style="border:1px solid #ffffff; background-color: white">
     </canvas>
 </div>
+
+{% js index %}

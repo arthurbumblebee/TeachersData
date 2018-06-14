@@ -71,6 +71,8 @@ assets:
 sources:
   - _assets/css
   - _assets/images
+  - _assets/data
+  - _assets/js
 
 #
 # Sets JS compressor. No compression by default.
