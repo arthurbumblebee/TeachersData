@@ -51,3 +51,63 @@ plugins:
   - jekyll-assets
 assets:
   digest: true
+
+#
+# Plugin: jekyll-assets
+#
+assets:
+#
+# Pathname of the destination of generated (bundled) assets relative
+# to the destination of the root.
+#
+# dirname: assets
+#
+# Base URL of assets paths.
+#
+# baseurl: /assets/
+#
+# Pathnames where to find assets relative to the root of the site.
+#
+sources:
+  - _assets/css
+  - _assets/images
+
+#
+# Sets JS compressor. No compression by default.
+# Possible variants: 'yui', 'uglifier', nil
+#
+js_compressor: ~
+#
+# Sets CSS compressor. No compression by default.
+# Possible variants: 'yui', 'sass', nil
+#
+css_compressor: ~
+#
+# Globally enables adding image width and height attributes to image tags.
+# Does nothing if either width or height attribute already set.
+# Disabled by default.
+#
+autosize: false
+#
+# Sets cachebusting policy for generated assets.
+#
+# Possible variants:
+#
+#   none - disables cachebusting
+#
+#     source file:  _assets/javascripts/app.css
+#     output file:  _site/assets/javascriptis/app.css
+#     output URL:   /assets/javascripts/app.css
+#
+#   soft - leave filenames as-is, but `?cb=<md5>` suffix for URLs generated
+#          with `asset_path`, `javascript` and `stylesheet`:
+#
+#     source file:  _assets/javascripts/app.css
+#     output file:  _site/assets/javascriptis/app.css
+#     output URL:   /assets/javascripts/app.css?cb=4f41243847da693a4f356c0486114bc6
+#
+#   hard - (default) injects cachebusting checksum into processed filename:
+#
+#     source file:  _assets/javascripts/app.css
+#     output file:  _site/assets/javascriptis/app-4f41243847da693a4f356c0486114bc6.css
+#     output URL:   /assets/javascripts/app-4f41243847da693a4f356c0486114bc6.css
