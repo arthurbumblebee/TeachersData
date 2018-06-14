@@ -23,11 +23,11 @@ twitter_username: makumbiarthurh
 github_username:  arthurbumblebee
 
 # Build settings
-# sass:
-#   sass_dir: _sass
-# include: ['_pages']
-# kramdown:
-#   input: GFM
+sass:
+  sass_dir: _sass
+include: ['_pages']
+kramdown:
+  input: GFM
 
 # markdown: kramdown
 # theme: minima
