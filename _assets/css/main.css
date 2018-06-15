@@ -3,13 +3,16 @@
     src: url("https://www.bigelow.org/fonts/DINOT.otf")
 }
 
-html,
-body {
+html, body {
     font-family: 'Open Sans';
     background-color: #4A90E2;
     margin: 0;
     padding: 0;
     height: 100%;
+}
+
+h1, h2, h3, h4, p {
+    color: white;
 }
 
 h1 {
@@ -21,11 +24,7 @@ h2 {
     margin-bottom: 20px;
 }
 
-a,
-a:active,
-a:visited,
-a:focus,
-a:hover {
+a, a:active, a:visited, a:focus, a:hover {
     color: white !important;
 }
 
@@ -44,7 +43,7 @@ a.bigln:hover {
     text-decoration: none !important;
 }
 
-p {
+pa {
     color: white !important;
     font-family: 'Open Sans';
     font-size: 1.2em;
@@ -89,16 +88,14 @@ img {
 }
 
 a.navbar-brand {
+    position: relative;
     font-family: 'dinot';
     color: white !important;
     text-decoration: none !important;
-    font-size: 4em;
+    font-size: 3.5em;
 }
 
-a.navbar-brand:active,
-a.navbar-brand:visited,
-a.navbar-brand:active,
-a.navbar-brand:focus {
+a.navbar-brand:active, a.navbar-brand:visited, a.navbar-brand:active, a.navbar-brand:focus {
     color: white !important;
 }
 
@@ -110,8 +107,7 @@ a.navbar-brand:hover {
     padding-top: 15px;
 }
 
-.navbar-default .navbar-nav>li>a,
-.navbar-default .navbar-nav>li>a:focus {
+.navbar-default .navbar-nav>li>a, .navbar-default .navbar-nav>li>a:focus {
     color: white !important;
     font-size: 1.4em;
     padding-bottom: 0;
@@ -122,18 +118,22 @@ a.navbar-brand:hover {
 }
 
 .navbar-default .navbar-toggle .icon-bar {
-    background-color: white;
+    background-color: white !important;
 }
 
-span {
-    color: white;
+.navbar-toggle collapsed .icon-bar {
+    color: white !important;
+}
+
+button.navbar-toggle {
+    background-color: #4A90E2 !important;
 }
 
 #header {
     padding: 10px;
 }
 
-#body{
+#body {
     padding: 10px;
     padding-bottom: 60px;
 }
@@ -144,10 +144,15 @@ span {
     width: 100%;
     height: 60px;
 }
-.row{
+
+.row {
     padding: 10px;
     padding-left: 20px;
-    color: white !important;
     font-family: 'Open Sans';
     font-size: 1.1em;
+    /* background-color: rgb(255, 255, 255); */
+}
+
+label {
+    color: rgb(255, 255, 255) !important;
 }
