@@ -11,6 +11,9 @@ layout: default
         <div class="row">
             <label for="selLocation">Select location:</label>
             <select class="form-control" id="selLocation" style="width:75%;">
+                {% for location in site.data %}
+                    <option>{{location[0]}}</option>
+                {% endfor %}
                 <option>Portland</option>
                 <option>Waterville</option>
                 <option>Bigelow</option>
