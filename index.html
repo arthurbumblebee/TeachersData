@@ -9,8 +9,8 @@ layout: default
 <div>
     <form class="form-horizontal col-md-6" action="" role="form">
         <div class="row">
-            <label for="selLocation">Select location:</label>
-            <select class="form-control" id="selLocation" style="width:75%;">
+            <label for="selectLocation">Select location:</label>
+            <select class="form-control" id="selectLocation" style="width:75%;">
                 {% for location in site.data %}
                     <option>{{location[0]}}</option>
                 {% endfor %}
@@ -18,23 +18,25 @@ layout: default
                 <option>Waterville</option>
                 <option>Bigelow</option>
             </select>
-            <label class="radio-inline" for="temp">
-                <input type="radio" name="optradio">Temperature</label>
-            <label class="radio-inline" for="light">
-                <input type="radio" name="optradio">Light Intensity</label>
+            <label class="radio-inline" for="temperature">
+                <input type="radio" name="selectElement" value="temperature">Temperature</label>
+            <label class="radio-inline" for="light_intensity">
+                <input type="radio" name="selectElement" value="light_intensity" checked="checked" >Light Intensity</label>
         </div>
         <div class="row">
             <label>Select date range</label>
             <div class="form-group form-group-sm">
                 <label class="col-sm-1 control-label" for="start_date">From:</label>
                 <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="MM/DD/YYYY" id="start_date" style="width:75%;">
+                    {% comment %} <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="start_date" style="width:75%;"> {% endcomment %}
+                    <input class="form-control" type="text" value="7/15/2014 9:45 AM" id="start_date" style="width:75%;">
                 </div>
             </div>
             <div class="form-group form-group-sm">
                 <label class="col-sm-1 control-label" for="end_date">To:</label>
                 <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="MM/DD/YYYY" id="end_date" style="width:75%;">
+                    {% comment %} <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="end_date" style="width:75%;"> {% endcomment %}
+                    <input class="form-control" type="text" value="7/15/2014 11:00" id="end_date" style="width:75%;">
                 </div>
             </div>
             <div class="form-group text-center">
