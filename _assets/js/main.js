@@ -36,6 +36,7 @@ function displayResults() {
             var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
             var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
             var element = $("input[name='selectElement']:checked").val();
+            var plot_data = [[]];
 
             // console.log("value in ", $("#start_date").val());
             // console.log("raw", raw_data[0].date_time);
@@ -51,8 +52,12 @@ function displayResults() {
             }
             // console.log("start: ", start_id, " end: ", end_id);
             for (index = start_id - 1; index < end_id; index++) {
-                console.log(raw_data[index][element]);
+                var data_point = []
+                data_point.push(parseInt(raw_data[index]["#"], 10), parseFloat(raw_data[index][element], 10));
+                plot_data[0].push(data_point);
             }
+            console.log(plot_data);
+            $("#graph1").plot(plot_data).data("plot");
         }
     })
 }

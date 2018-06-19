@@ -12,7 +12,7 @@ layout: default
             <label for="selectLocation">Select location:</label>
             <select class="form-control" id="selectLocation" style="width:75%;">
                 {% for location in site.data %}
-                    <option>{{location[0]}}</option>
+                <option>{{location[0]}}</option>
                 {% endfor %}
                 <option>Portland</option>
                 <option>Waterville</option>
@@ -21,21 +21,25 @@ layout: default
             <label class="radio-inline" for="temperature">
                 <input type="radio" name="selectElement" value="temperature">Temperature</label>
             <label class="radio-inline" for="light_intensity">
-                <input type="radio" name="selectElement" value="light_intensity" checked="checked" >Light Intensity</label>
+                <input type="radio" name="selectElement" value="light_intensity" checked="checked">Light Intensity</label>
         </div>
         <div class="row">
             <label>Select date range</label>
             <div class="form-group form-group-sm">
                 <label class="col-sm-1 control-label" for="start_date">From:</label>
                 <div class="col-sm-10">
-                    {% comment %} <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="start_date" style="width:75%;"> {% endcomment %}
+                    {% comment %}
+                    <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="start_date"
+                        style="width:75%;"> {% endcomment %}
                     <input class="form-control" type="text" value="7/15/2014 9:45 AM" id="start_date" style="width:75%;">
                 </div>
             </div>
             <div class="form-group form-group-sm">
                 <label class="col-sm-1 control-label" for="end_date">To:</label>
                 <div class="col-sm-10">
-                    {% comment %} <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="end_date" style="width:75%;"> {% endcomment %}
+                    {% comment %}
+                    <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="end_date"
+                        style="width:75%;"> {% endcomment %}
                     <input class="form-control" type="text" value="7/15/2014 11:00" id="end_date" style="width:75%;">
                 </div>
             </div>
@@ -45,8 +49,10 @@ layout: default
         </div>
     </form>
     <div class="row col-md-6 text-center">
-        <label>Generated graph</label> <br>
+        <label>Generated graph</label>
+        <br> {% comment %}
         <canvas id="graph1" width="100" height="100" style="border:1px solid #ffffff; background-color: white">
-        </canvas>
+        </canvas> {% endcomment %}
+        <div id="graph1" style="width:300px; height:200px; border:1px solid #ffffff; background-color: white"></div>
     </div>
 </div>
