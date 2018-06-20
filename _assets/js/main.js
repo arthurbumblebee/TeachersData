@@ -1,12 +1,34 @@
-// choose dates
-$(function chooseDate() {
+// automate default dates, max and min dates
+$(function () {
+    $("#selectLocation").change(function () {
+        $.ajax({
+            url: "data/" + $("#selectLocation").val() + ".csv",
+            dataType: "text",
+            success: function (data) {
+                var current_csv = csv_to_JSON(data);
+                console.log("begin at : ", current_csv[0].date_time);
+                console.log("end at : ", current_csv[current_csv.length - 2].date_time);
+                chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
+            }
+        })
+    })
+        .change();
+});
+
+// choose dates logic
+function chooseDate(min_date, max_date) {
     // http://momentjs.com/docs/#/displaying/format/ - to see formats
     $('#start_date').datetimepicker({
-        ignoreReadonly: true
+        ignoreReadonly: true,
+        minDate: min_date,
+        defaultDate: min_date
+        
     });
     $('#end_date').datetimepicker({
         useCurrent: false,
-        ignoreReadonly: true
+        ignoreReadonly: true,
+        maxDate: max_date,
+        defaultDate: max_date
     });
     // disable choosing invalid dates
     $("#start_date").on("dp.change", function (e) {
@@ -15,7 +37,7 @@ $(function chooseDate() {
     $("#end_date").on("dp.change", function (e) {
         $('#start_date').data("DateTimePicker").maxDate(e.date);
     });
-})
+}
 
 // process data
 $(function () {
@@ -32,40 +54,35 @@ function displayResults() {
         url: "data/" + $("#selectLocation").val() + ".csv",
         dataType: "text",
         success: function (data) {
-            var raw_data = csv_to_JSON(data);
-            var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
-            var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
-            var element = $("input[name='selectElement']:checked").val();
-            var plot_data = [[]];
-
-            // console.log("value in ", $("#start_date").val());
-            // console.log("raw", raw_data[0].date_time);
-            // console.log("proc", start);
-            // console.log("eleme", element);
-            for (var index = 0; index < raw_data.length; index++) {
-                if (raw_data[index].date_time == start) {
-                    var start_id = raw_data[index]["#"];
-                }
-                else if (raw_data[index].date_time == end) {
-                    var end_id = raw_data[index]["#"];
-                }
-            }
-            // console.log("start: ", start_id, " end: ", end_id);
-            for (index = start_id - 1; index < end_id; index++) {
-                var data_point = []
-                data_point.push(parseInt(raw_data[index]["#"], 10), parseFloat(raw_data[index][element], 10));
-                plot_data[0].push(data_point);
-            }
-            console.log(plot_data);
-            $("#graph1").plot(plot_data).data("plot");
+            process_input(data);
         }
     })
 }
+// process the given input from the client
+function process_input(data) {
+    var raw_data = csv_to_JSON(data);
+    var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
+    var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
+    var element = $("input[name='selectElement']:checked").val();
+    // console.log("value in ", $("#start_date").val());
+    // console.log("raw", raw_data[0].date_time);
+    // console.log("proc", start);
+    // console.log("eleme", element);
 
-// https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
+    for (var index = 0; index < raw_data.length; index++) {
+        if (raw_data[index].date_time == start) {
+            var start_id = raw_data[index]["#"];
+        }
+        if (raw_data[index].date_time == end) {
+            var end_id = raw_data[index]["#"];
+        }
+    }
+    console.log("start: ", start_id, " end: ", end_id);
+    generate_data_to_plot(raw_data, start_id, end_id, element);
 
-// convert csv to json
-// var csv is the CSV file with headers
+}
+
+// convert csv to json...var csv is the CSV file with headers
 function csv_to_JSON(csv) {
     var lines = csv.split("\r\n");
     var result = [];
@@ -80,3 +97,31 @@ function csv_to_JSON(csv) {
     }
     return result;
 }
+
+// generate the data to plot
+function generate_data_to_plot(raw_data, start_id, end_id, element) {
+    var plot_data = [[]];
+    for (var index = start_id - 1; index < end_id; index++) {
+        var data_point = []
+        data_point.push(parseInt(raw_data[index]["#"], 10), parseFloat(raw_data[index][element], 10));
+        plot_data[0].push(data_point);
+    }
+    // console.log(plot_data);
+    generate_plot(plot_data);
+
+}
+
+// plot the data
+function generate_plot(plot_data) {
+    var options = {
+        series: {
+            lines: { show: true },
+            points: { show: true, fill: false }
+        }
+    };
+    var plot = $("#graph1").plot(plot_data, options).data("plot");
+}
+
+
+// https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
+

@@ -1,4 +1,4 @@
-#,"Date Time, GMT-04:00","Temp, �C","Intensity"
+#,date_time,temperature,light_intensity
 1,7/15/2014 7:00,15.664,96.9
 2,7/15/2014 7:15,18.616,10.8
 3,7/15/2014 7:30,18.616,0
