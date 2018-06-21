@@ -28,17 +28,15 @@ layout: default
             <div class="form-group form-group-sm">
                 <label class="col-sm-1 control-label" for="start_date">From:</label>
                 <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="start_date" style="width:75%;"> 
-                    {% comment %}
-                    <input class="form-control" type="text" value="7/15/2014 9:45 AM" id="start_date" style="width:75%;"> {% endcomment %}
+                    {% comment %} <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="start_date" style="width:75%;">  {% endcomment %}
+                    <input class="form-control" type="text" value="7/15/2014 9:45 AM" id="start_date" style="width:75%;">
                 </div>
             </div>
             <div class="form-group form-group-sm">
                 <label class="col-sm-1 control-label" for="end_date">To:</label>
                 <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="end_date" style="width:75%;"> 
-                    {% comment %}
-                    <input class="form-control" type="text" value="7/15/2014 11:00" id="end_date" style="width:75%;"> {% endcomment %}
+                    {% comment %} <input class="form-control" type="text" placeholder="MM/DD/YYYY hh:mm a" id="end_date" style="width:75%;">  {% endcomment %}
+                    <input class="form-control" type="text" value="7/15/2014 11:00" id="end_date" style="width:75%;">
                 </div>
             </div>
             <div class="form-group text-center">
@@ -46,11 +44,11 @@ layout: default
             </div>
         </div>
     </form>
-    <div class="row col-md-6 text-center">
+    <div class="row col-md-6 text-center" id="graph_area" style="visibility:hidden;">
         <label>Generated graph</label>
         <br> {% comment %}
-        <canvas id="graph1" width="100" height="100" style="border:1px solid #ffffff; background-color: white">
+        <canvas id="graph_placeholder" width="100" height="100" style="border:1px solid #ffffff; background-color: white">
         </canvas> {% endcomment %}
-        <div id="graph1" style="position:relative; width:100%; height:300px; border:1px solid #ffffff; background-color: white"></div>
+        <div id="graph_placeholder" style="position:relative; width:100%; height:300px; border:1px solid #ffffff; background-color: white"></div>
     </div>
 </div>

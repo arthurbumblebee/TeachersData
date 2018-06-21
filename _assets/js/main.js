@@ -1,3 +1,7 @@
+// https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
+// https://plot.ly
+
+var current_csv;
 // automate default dates, max and min dates
 $(function () {
     $("#selectLocation").change(function () {
@@ -5,7 +9,7 @@ $(function () {
             url: "data/" + $("#selectLocation").val() + ".csv",
             dataType: "text",
             success: function (data) {
-                var current_csv = csv_to_JSON(data);
+                current_csv = csv_to_JSON(data);
                 console.log("begin at : ", current_csv[0].date_time);
                 console.log("end at : ", current_csv[current_csv.length - 2].date_time);
                 chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
@@ -15,18 +19,19 @@ $(function () {
         .change();
 });
 
-// choose dates logic
+// choosing dates: logic
 function chooseDate(min_date, max_date) {
     // http://momentjs.com/docs/#/displaying/format/ - to see formats
     $('#start_date').datetimepicker({
         ignoreReadonly: true,
+        // maxDate: max_date, 
         minDate: min_date,
         defaultDate: min_date
-        
     });
     $('#end_date').datetimepicker({
         useCurrent: false,
         ignoreReadonly: true,
+        minDate: min_date,
         maxDate: max_date,
         defaultDate: max_date
     });
@@ -43,42 +48,31 @@ function chooseDate(min_date, max_date) {
 $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
-        displayResults();
+        $('#graph_area').css("visibility","visible");
+        process_input(current_csv);
     });
 });
 
-// helper function to get data points
-function displayResults() {
-    // alert("location: " + $("#selectLocation").val() + "\n start: "+ $("#start_date").val() + "\n end: "+$("#end_date").val() + "\n opt: "+$("input[name='selectElement']:checked").val());
-    $.ajax({
-        url: "data/" + $("#selectLocation").val() + ".csv",
-        dataType: "text",
-        success: function (data) {
-            process_input(data);
-        }
-    })
-}
 // process the given input from the client
 function process_input(data) {
-    var raw_data = csv_to_JSON(data);
     var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
     var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
     var element = $("input[name='selectElement']:checked").val();
     // console.log("value in ", $("#start_date").val());
-    // console.log("raw", raw_data[0].date_time);
+    // console.log("raw", data[0].date_time);
     // console.log("proc", start);
     // console.log("eleme", element);
 
-    for (var index = 0; index < raw_data.length; index++) {
-        if (raw_data[index].date_time == start) {
-            var start_id = raw_data[index]["#"];
+    for (var index = 0; index < data.length; index++) {
+        if (data[index].date_time == start) {
+            var start_id = data[index]["#"];
         }
-        if (raw_data[index].date_time == end) {
-            var end_id = raw_data[index]["#"];
+        if (data[index].date_time == end) {
+            var end_id = data[index]["#"];
         }
     }
     console.log("start: ", start_id, " end: ", end_id);
-    generate_data_to_plot(raw_data, start_id, end_id, element);
+    generate_data_to_plot(data, start_id, end_id, element);
 
 }
 
@@ -100,28 +94,69 @@ function csv_to_JSON(csv) {
 
 // generate the data to plot
 function generate_data_to_plot(raw_data, start_id, end_id, element) {
-    var plot_data = [[]];
+    var plot_data = [];
     for (var index = start_id - 1; index < end_id; index++) {
         var data_point = []
         data_point.push(parseInt(raw_data[index]["#"], 10), parseFloat(raw_data[index][element], 10));
-        plot_data[0].push(data_point);
+        plot_data.push(data_point);
     }
     // console.log(plot_data);
-    generate_plot(plot_data);
+    generate_plot(plot_data, element);
 
 }
 
 // plot the data
-function generate_plot(plot_data) {
+function generate_plot(plot_data, element) {
+    // console.log("plot", plot_data);
     var options = {
         series: {
             lines: { show: true },
-            points: { show: true, fill: false }
+            points: { show: true }
+        },
+        grid: {
+            clickable: true,
+            hoverable: true
         }
     };
-    var plot = $("#graph1").plot(plot_data, options).data("plot");
+    var plot = $.plot("#graph_placeholder", [{
+        label: element,
+        data: plot_data
+    }], options);
 }
 
+// hoverable handler
+// $("#graph_placeholder").bind("plothover", function (event, pos, item) {
+//     console.log("hovered");
+//     alert("You clicked at " + pos.x + ", " + pos.y);
+//     // axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
+//     // if you need global screen coordinates, they are pos.pageX, pos.pageY
 
-// https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
+//     if (item) {
+//         highlight(item.series, item.datapoint);
+//         alert("You clicked a point!");
+//     }
+// });
 
+$(function () {
+    $("<div id='tooltip'></div>").css({
+        position: "absolute",
+        display: "none",
+        border: "1px solid #fdd",
+        padding: "2px",
+        "background-color": "#fee",
+        opacity: 0.80
+    }).appendTo("body");
+
+    $("#graph_placeholder").bind("plothover", function (event, pos, item) {
+        if (item) {
+            var x = item.datapoint[0].toFixed(2),
+                y = item.datapoint[1].toFixed(2);
+
+            $("#tooltip").html(item.series.label + " at " + x + " = " + y)
+                .css({ top: item.pageY + 5, left: item.pageX + 5 })
+                .fadeIn(200);
+        } else {
+            $("#tooltip").hide();
+        }
+    });
+});
