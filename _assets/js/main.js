@@ -31,7 +31,7 @@ function chooseDate(min_date, max_date) {
     $('#end_date').datetimepicker({
         useCurrent: false,
         ignoreReadonly: true,
-        minDate: min_date,
+        // minDate: min_date,
         maxDate: max_date,
         defaultDate: max_date
     });
@@ -48,7 +48,7 @@ function chooseDate(min_date, max_date) {
 $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
-        $('#graph_area').css("visibility","visible");
+        $('#graph_area').css("visibility", "visible");
         process_input(current_csv);
     });
 });
@@ -116,27 +116,33 @@ function generate_plot(plot_data, element) {
         grid: {
             clickable: true,
             hoverable: true
+        },
+        xaxis: {
+            // mode: "time",
+            // tickSize: [1, "month"],
+            // tickLength: 0,
+            axisLabel: "Time",
+            axisLabelUseCanvas: true,
+            // axisLabelFontSizePixels: 12,
+            // axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelPadding: 10
+        },
+        yaxis: {
+            axisLabel: element,
+            axisLabelUseCanvas: true,
+            // axisLabelFontSizePixels: 12,
+            // axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelPadding: 10
         }
     };
-    var plot = $.plot("#graph_placeholder", [{
+    var data = [{
         label: element,
         data: plot_data
-    }], options);
+    }];
+    var plot = $.plot("#graph_placeholder", data, options);
 }
 
 // hoverable handler
-// $("#graph_placeholder").bind("plothover", function (event, pos, item) {
-//     console.log("hovered");
-//     alert("You clicked at " + pos.x + ", " + pos.y);
-//     // axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
-//     // if you need global screen coordinates, they are pos.pageX, pos.pageY
-
-//     if (item) {
-//         highlight(item.series, item.datapoint);
-//         alert("You clicked a point!");
-//     }
-// });
-
 $(function () {
     $("<div id='tooltip'></div>").css({
         position: "absolute",
