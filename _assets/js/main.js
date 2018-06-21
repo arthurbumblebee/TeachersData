@@ -58,10 +58,6 @@ function process_input(data) {
     var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
     var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
     var element = $("input[name='selectElement']:checked").val();
-    // console.log("value in ", $("#start_date").val());
-    // console.log("raw", data[25].date_time);
-    // console.log("proc", start);
-    // console.log("eleme", element);
 
     for (var index = 0; index < data.length; index++) {
         if (data[index].date_time == start) {
@@ -71,7 +67,6 @@ function process_input(data) {
             var end_id = data[index]["#"];
         }
     }
-    console.log("start: ", start_id, " end: ", end_id);
     generate_data_to_plot(data, start_id, end_id, element);
 
 }
@@ -95,9 +90,13 @@ function csv_to_JSON(csv) {
 // generate the data to plot
 function generate_data_to_plot(raw_data, start_id, end_id, element) {
     var plot_data = [];
+    var dateParts, date, timestamp;
     for (var index = start_id - 1; index < end_id; index++) {
-        var data_point = []
-        data_point.push(parseInt(raw_data[index]["#"], 10), parseFloat(raw_data[index][element], 10));
+        var data_point = [];
+        dateParts = raw_data[index]["date_time"].match(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/);
+        date = new Date(dateParts[3], dateParts[1] - 1, dateParts[2], dateParts[4], dateParts[5]);
+        timestamp = date.getTime() * 1;
+        data_point.push(timestamp, parseFloat(raw_data[index][element], 10));
         plot_data.push(data_point);
     }
     // console.log(plot_data);
@@ -107,7 +106,6 @@ function generate_data_to_plot(raw_data, start_id, end_id, element) {
 
 // plot the data
 function generate_plot(plot_data, element) {
-    // console.log("plot", plot_data);
     var options = {
         series: {
             lines: { show: true },
@@ -118,7 +116,8 @@ function generate_plot(plot_data, element) {
             hoverable: true
         },
         xaxis: {
-            // mode: "time",
+            mode: "time",
+            timezone: "browser",
             // tickSize: [1, "month"],
             // tickLength: 0,
             axisLabel: "Time",
@@ -139,30 +138,62 @@ function generate_plot(plot_data, element) {
         label: element,
         data: plot_data
     }];
-    var plot = $.plot("#graph_placeholder", data, options);
+    $.plot("#graph_placeholder", data, options);
+    $("#graph_placeholder").UseTooltip();
 }
 
-// hoverable handler
-$(function () {
-    $("<div id='tooltip'></div>").css({
-        position: "absolute",
-        display: "none",
-        border: "1px solid #fdd",
-        padding: "2px",
-        "background-color": "#fee",
-        opacity: 0.80
-    }).appendTo("body");
+var previousPoint = null, previousLabel = null;
+var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    $("#graph_placeholder").bind("plothover", function (event, pos, item) {
+$.fn.UseTooltip = function () {
+    $(this).bind("plothover", function (event, pos, item) {
         if (item) {
-            var x = item.datapoint[0].toFixed(2),
-                y = item.datapoint[1].toFixed(2);
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
 
-            $("#tooltip").html(item.series.label + " at " + x + " = " + y)
-                .css({ top: item.pageY + 5, left: item.pageX + 5 })
-                .fadeIn(200);
+                var timestamp = item.datapoint[0];
+                var element_data = item.datapoint[1];
+
+                var color = item.series.color;
+                var time = new Date(timestamp).toLocaleString();
+
+                //console.log(item);
+
+                if (item.seriesIndex == 0) {
+                    showTooltip(item.pageX,
+                        item.pageY,
+                        color,
+                        "<strong>" + item.series.label + "</strong><br>" + time + " : <strong>" + element_data + "</strong>");
+                } else {
+                    showTooltip(item.pageX,
+                        item.pageY,
+                        color,
+                        "<strong>" + item.series.label + "</strong><br>" + time + " : <strong>" + element_data + "</strong>");
+                }
+            }
         } else {
-            $("#tooltip").hide();
+            $("#tooltip").remove();
+            previousPoint = null;
         }
     });
-});
+
+};
+// });
+
+function showTooltip(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 50,
+        left: x - 60,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '9px',
+        'border-radius': '5px',
+        'background-color': '#fff',
+        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.85
+    }).appendTo("body").fadeIn(200);
+}
