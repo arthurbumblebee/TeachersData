@@ -55,11 +55,11 @@ $(function () {
 
 // process the given input from the client
 function process_input(data) {
-    var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
-    var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY h:mm');
+    var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
+    var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
     var element = $("input[name='selectElement']:checked").val();
     // console.log("value in ", $("#start_date").val());
-    // console.log("raw", data[0].date_time);
+    // console.log("raw", data[25].date_time);
     // console.log("proc", start);
     // console.log("eleme", element);
 
