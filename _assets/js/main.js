@@ -186,8 +186,9 @@ function showTooltip(x, y, color, contents) {
     $('<div id="tooltip">' + contents + '</div>').css({
         position: 'absolute',
         display: 'none',
+        width: 100,
         top: y - 50,
-        left: x - 60,
+        left: x - 70,
         border: '2px solid ' + color,
         padding: '3px',
         'font-size': '9px',

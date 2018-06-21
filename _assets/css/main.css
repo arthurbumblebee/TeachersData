@@ -173,3 +173,7 @@ canvas {
 #graph_area {
     visibility: hidden;
 }
+
+.tooltip {
+    background-color:blue,
+}
