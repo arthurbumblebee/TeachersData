@@ -143,10 +143,9 @@ function generate_plot(plot_data, element) {
 }
 
 var previousPoint = null, previousLabel = null;
-var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 $.fn.UseTooltip = function () {
-    $(this).bind("plothover", function (event, pos, item) {
+    $(this).bind(("plotclick", "plothover"), function (event, pos, item) {
         if (item) {
             if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
                 previousPoint = item.dataIndex;
@@ -158,8 +157,6 @@ $.fn.UseTooltip = function () {
 
                 var color = item.series.color;
                 var time = new Date(timestamp).toLocaleString();
-
-                //console.log(item);
 
                 if (item.seriesIndex == 0) {
                     showTooltip(item.pageX,
@@ -184,17 +181,8 @@ $.fn.UseTooltip = function () {
 
 function showTooltip(x, y, color, contents) {
     $('<div id="tooltip">' + contents + '</div>').css({
-        position: 'absolute',
-        display: 'none',
-        width: 100,
         top: y - 50,
         left: x - 70,
         border: '2px solid ' + color,
-        padding: '3px',
-        'font-size': '9px',
-        'border-radius': '5px',
-        'background-color': '#fff',
-        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
-        opacity: 0.85
     }).appendTo("body").fadeIn(200);
 }
