@@ -32,7 +32,7 @@ function chooseDate(min_date, max_date) {
     $('#end_date').datetimepicker({
         useCurrent: false,
         ignoreReadonly: true,
-        // minDate: min_date,
+        minDate: min_date,
         maxDate: max_date,
         defaultDate: max_date
     });
