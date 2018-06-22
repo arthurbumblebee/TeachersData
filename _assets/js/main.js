@@ -2,6 +2,7 @@
 // https://plot.ly
 
 var current_csv;
+
 // automate default dates, max and min dates
 $(function () {
     $("#selectLocation").change(function () {
@@ -57,8 +58,14 @@ $(function () {
 function process_input(data) {
     var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
     var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
-    var element = $("input[name='selectElement']:checked").val();
+    var elements = $("input[type='checkbox']:checked").map(function () {
+        return $(this).val();
+    }).get();
+    console.log("selected : ", elements);
+    generate_range(data, start, end, elements);
+}
 
+function generate_range(data, start, end, elements) {
     for (var index = 0; index < data.length; index++) {
         if (data[index].date_time == start) {
             var start_id = data[index]["#"];
@@ -67,8 +74,7 @@ function process_input(data) {
             var end_id = data[index]["#"];
         }
     }
-    generate_data_to_plot(data, start_id, end_id, element);
-
+    generate_data_to_plot(data, start_id, end_id, elements);
 }
 
 // convert csv to json...var csv is the CSV file with headers
@@ -88,32 +94,38 @@ function csv_to_JSON(csv) {
 }
 
 // generate the data to plot
-function generate_data_to_plot(raw_data, start_id, end_id, element) {
+function generate_data_to_plot(raw_data, start_id, end_id, elements) {
     var plot_data = [];
-    var dateParts, date, timestamp;
-    for (var index = start_id - 1; index < end_id; index++) {
-        var data_point = [];
-        dateParts = raw_data[index]["date_time"].match(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/);
-        date = new Date(dateParts[3], dateParts[1] - 1, dateParts[2], dateParts[4], dateParts[5]);
-        timestamp = date.getTime() * 1;
-        data_point.push(timestamp, parseFloat(raw_data[index][element], 10));
-        plot_data.push(data_point);
+    var dateParts, date, timestamp, element_index, index;
+    element_index = 0;
+    for (element_index = 0; element_index < elements.length; element_index++) {
+        var element_plot_data = [];
+        for (index = start_id - 1; index < end_id; index++) {
+            var data_point = [];
+            dateParts = raw_data[index]["date_time"].match(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/);
+            date = new Date(dateParts[3], dateParts[1] - 1, dateParts[2], dateParts[4], dateParts[5]);
+            timestamp = date.getTime() * 1;
+            data_point.push(timestamp, parseFloat(raw_data[index][elements[element_index]], 10));
+            element_plot_data.push(data_point);
+        }
+        plot_data.push(element_plot_data);
     }
-    // console.log(plot_data);
-    generate_plot(plot_data, element);
+    // console.log("elements : ", elements[element_index], elements.length);
+    console.log("plot data : ", plot_data);
+    generate_plot(plot_data, elements);
 
 }
 
 // plot the data
-function generate_plot(plot_data, element) {
+function generate_plot(plot_data, elements) {
+    var data = [
+        { label: elements[0], data: plot_data[0] },
+        { label: elements[1], data: plot_data[1], yaxis: 2 }
+    ];
     var options = {
         series: {
             lines: { show: true },
-            points: { show: true }
-        },
-        grid: {
-            clickable: true,
-            hoverable: true
+            points: { show: false }
         },
         xaxis: {
             mode: "time",
@@ -122,22 +134,41 @@ function generate_plot(plot_data, element) {
             // tickLength: 0,
             axisLabel: "Time",
             axisLabelUseCanvas: true,
-            // axisLabelFontSizePixels: 12,
-            // axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana',
             axisLabelPadding: 10
         },
-        yaxis: {
-            axisLabel: element,
-            axisLabelUseCanvas: true,
-            // axisLabelFontSizePixels: 12,
-            // axisLabelFontFamily: 'Verdana, Arial',
-            axisLabelPadding: 10
-        }
+        yaxes: [
+            {
+                axisLabel: elements[0],
+                axisLabelUseCanvas: true,
+                axisLabelFontSizePixels: 12,
+                axisLabelFontFamily: 'Verdana',
+                axisLabelPadding: 10
+            }, {
+                position: "right",
+                axisLabel: elements[1],
+                axisLabelUseCanvas: true,
+                axisLabelFontSizePixels: 12,
+                axisLabelFontFamily: 'Verdana',
+                axisLabelPadding: 10
+            }
+        ],
+        legend: {
+            noColumns: 1,
+            labelBoxBorderColor: "white",
+            position: "ne"
+        },
+        grid: {
+            hoverable: true,
+            clickable: true,
+            borderWidth: 2,
+            borderColor: "rgb(150, 85, 167)",
+            backgroundColor: { colors: ["white", "rgb(228, 236, 247)"] }
+        },
+        colors: ["rgb(238, 178, 50)", "rgb(50, 216, 238)"]
     };
-    var data = [{
-        label: element,
-        data: plot_data
-    }];
+
     $.plot("#graph_placeholder", data, options);
     $("#graph_placeholder").UseTooltip();
 }
@@ -177,7 +208,6 @@ $.fn.UseTooltip = function () {
     });
 
 };
-// });
 
 function showTooltip(x, y, color, contents) {
     $('<div id="tooltip">' + contents + '</div>').css({
