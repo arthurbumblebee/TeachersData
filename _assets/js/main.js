@@ -11,8 +11,8 @@ $(function () {
             dataType: "text",
             success: function (data) {
                 current_csv = csv_to_JSON(data);
-                console.log("begin at : ", current_csv[0].date_time);
-                console.log("end at : ", current_csv[current_csv.length - 2].date_time);
+                // console.log("begin at : ", current_csv[0].date_time);
+                // console.log("end at : ", current_csv[current_csv.length - 2].date_time);
                 chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
             }
         })
@@ -24,9 +24,10 @@ $(function () {
 function chooseDate(min_date, max_date) {
     // http://momentjs.com/docs/#/displaying/format/ - to see formats
     $('#start_date').datetimepicker({
+        useCurrent: false,
         ignoreReadonly: true,
-        // maxDate: max_date, 
         minDate: min_date,
+        maxDate: max_date,
         defaultDate: min_date
     });
     $('#end_date').datetimepicker({
@@ -36,6 +37,7 @@ function chooseDate(min_date, max_date) {
         maxDate: max_date,
         defaultDate: max_date
     });
+
     // disable choosing invalid dates
     $("#start_date").on("dp.change", function (e) {
         $('#end_date').data("DateTimePicker").minDate(e.date);
@@ -61,7 +63,6 @@ function process_input(data) {
     var elements = $("input[type='checkbox']:checked").map(function () {
         return $(this).val();
     }).get();
-    console.log("selected : ", elements);
     generate_range(data, start, end, elements);
 }
 
