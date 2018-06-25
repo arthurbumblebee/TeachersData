@@ -50,7 +50,6 @@ function chooseDate(min_date, max_date) {
     $("#end_date").on("dp.change", function (e) {
         $('#start_date').data("DateTimePicker").maxDate(e.date);
     });
-
 }
 
 // process data
