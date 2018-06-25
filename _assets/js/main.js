@@ -1,5 +1,9 @@
 // https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
 // https://plot.ly
+// https://github.com/flot/flot/blob/master/API.md#time-series-data
+// http://www.jqueryflottutorial.com/jquery-flot-toggling-series-manipulation.html
+
+
 
 var current_csv;
 
