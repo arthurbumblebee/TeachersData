@@ -1,9 +1,8 @@
-// https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
+// map reading - https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
+// flot api - https://github.com/flot/flot/blob/master/API.md#time-series-data
+// flot toggling - http://www.jqueryflottutorial.com/jquery-flot-toggling-series-manipulation.html
 // https://plot.ly
-// https://github.com/flot/flot/blob/master/API.md#time-series-data
-// http://www.jqueryflottutorial.com/jquery-flot-toggling-series-manipulation.html
-
-
+// ajax jekyll tutorial - http://frontendcollisionblog.com/javascript/jekyll/tutorial/2015/03/26/getting-started-with-a-search-engine-for-your-site-no-server-required.html
 
 var current_csv;
 
@@ -15,8 +14,7 @@ $(function () {
             dataType: "text",
             success: function (data) {
                 current_csv = csv_to_JSON(data);
-                // console.log("begin at : ", current_csv[0].date_time);
-                // console.log("end at : ", current_csv[current_csv.length - 2].date_time);
+                // console.log("begin at : ", current_csv[0].date_time, "end at : ", current_csv[current_csv.length - 2].date_time);
                 chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
             }
         })
@@ -42,6 +40,9 @@ function chooseDate(min_date, max_date) {
         defaultDate: max_date
     });
 
+    $("#start_date").val(min_date);
+    $("#end_date").val(max_date);
+
     // disable choosing invalid dates
     $("#start_date").on("dp.change", function (e) {
         $('#end_date').data("DateTimePicker").minDate(e.date);
@@ -49,6 +50,7 @@ function chooseDate(min_date, max_date) {
     $("#end_date").on("dp.change", function (e) {
         $('#start_date').data("DateTimePicker").maxDate(e.date);
     });
+
 }
 
 // process data
@@ -56,6 +58,7 @@ $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
         $('#graph_area').css("visibility", "visible");
+        // console.log("file : ", current_csv);
         process_input(current_csv);
     });
 });
@@ -116,7 +119,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         plot_data.push(element_plot_data);
     }
     // console.log("elements : ", elements[element_index], elements.length);
-    console.log("plot data : ", plot_data);
+    // console.log("plot data : ", plot_data);
     generate_plot(plot_data, elements);
 
 }
