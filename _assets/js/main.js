@@ -106,6 +106,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
     var plot_data = [];
     var dateParts, date, timestamp, element_index, index;
     element_index = 0;
+    // console.log("file : ", raw_data);
     for (element_index = 0; element_index < elements.length; element_index++) {
         var element_plot_data = [];
         for (index = start_id - 1; index < end_id; index++) {
