@@ -14,10 +14,12 @@ $(function () {
     $("#selectLocation").change(function () {
         $.ajax({
             // url: "{{ site.baseurl}}/{{ site.data }}/" + $("#selectLocation").val() + ".csv",
-            url: "data/" + $("#selectLocation").val() + ".csv",
+            url: "data/recordedData/" + $("#selectLocation").val() + ".csv",
             dataType: "text",
             success: function (data) {
+                // console.log(data);
                 current_csv = csv_to_JSON(data);
+                // console.log(current_csv);
                 // console.log("begin at : ", current_csv[0].date_time, "end at : ", current_csv[current_csv.length - 2].date_time);
                 chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
             }
@@ -90,7 +92,7 @@ function generate_range(data, start, end, elements) {
 
 // convert csv to json...var csv is the CSV file with headers
 function csv_to_JSON(csv) {
-    var lines = csv.split("\r\n");
+    var lines = csv.split("\n");
     var result = [];
     var headers = lines[0].split(",");
     for (var i = 1; i < lines.length; i++) {
@@ -123,7 +125,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         plot_data.push(element_plot_data);
     }
     // console.log("elements : ", elements[element_index], elements.length);
-    // console.log("plot data : ", plot_data);
+    console.log("plot data : ", plot_data);
     generate_plot(plot_data, elements);
 
 }
@@ -229,9 +231,46 @@ function showTooltip(x, y, color, contents) {
     }).appendTo("body").fadeIn(200);
 }
 
-$(function initMap() {
-    var Portland = { lat: 43.6614700, lng: -70.2553300 };
-    var map = new google.maps.Map(
-        document.getElementById('map'), { zoom: 8, center: Portland });
-    var marker = new google.maps.Marker({ position: Portland, map: map });
+$(function () {
+    $.ajax({
+        url: "data/locations/locations.csv",
+        dataType: "text",
+        success: function (data) {
+            var markers = csv_to_JSON(data);
+            console.log("locations : ", markers);
+            initMap(markers);
+        }
+    })
 });
+
+function initMap(markers) {
+    var bounds = new google.maps.LatLngBounds();
+    var mapDiv = document.getElementById('map');
+    var map = new google.maps.Map(mapDiv, { zoom: 8 });
+
+    for (var i = 0; i < markers.length; i++) {
+        var position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
+        bounds.extend(position);
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: markers[i].title
+        });
+        marker.addListener('click', function (event, item) {
+            console.log("location clicked", item);
+            locationClicked(event, item);
+        });
+    }
+    // Automatically center the map fitting all markers on the screen
+    map.fitBounds(bounds);
+
+    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
+        this.setZoom(5);
+        google.maps.event.removeListener(boundsListener);
+    });
+};
+
+function locationClicked(event, item){
+    console.log("location clicked", event);
+}
