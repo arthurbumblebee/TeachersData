@@ -1,3 +1,6 @@
+// ---
+// ---
+
 // map reading - https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
 // flot api - https://github.com/flot/flot/blob/master/API.md#time-series-data
 // flot toggling - http://www.jqueryflottutorial.com/jquery-flot-toggling-series-manipulation.html
@@ -10,6 +13,7 @@ var current_csv;
 $(function () {
     $("#selectLocation").change(function () {
         $.ajax({
+            // url: "{{ site.baseurl}}/{{ site.data }}/" + $("#selectLocation").val() + ".csv",
             url: "data/" + $("#selectLocation").val() + ".csv",
             dataType: "text",
             success: function (data) {
@@ -224,3 +228,10 @@ function showTooltip(x, y, color, contents) {
         border: '2px solid ' + color,
     }).appendTo("body").fadeIn(200);
 }
+
+$(function initMap() {
+    var Portland = { lat: 43.6614700, lng: -70.2553300 };
+    var map = new google.maps.Map(
+        document.getElementById('map'), { zoom: 8, center: Portland });
+    var marker = new google.maps.Marker({ position: Portland, map: map });
+});
