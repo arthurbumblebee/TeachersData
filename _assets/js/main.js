@@ -255,10 +255,8 @@ function initMap(markers) {
             map: map,
             title: name
         });
-        marker.addListener('click', function () {
-            console.log("location clicked", marker.title);
-            locationClicked(marker.title);
-        });
+        attachMarker(marker);
+
     }
     // Automatically center the map fitting all markers on the screen
     map.fitBounds(bounds);
@@ -268,7 +266,13 @@ function initMap(markers) {
     //     this.setZoom(8);
     //     google.maps.event.removeListener(boundsListener);
     // });
-};
+}
+
+function attachMarker(marker) {
+    marker.addListener('click', function () {
+        locationClicked(marker.title);
+    });
+}
 
 function locationClicked(name) {
     console.log("name ", name);
