@@ -19,13 +19,10 @@ $(function () {
 
 function locationChanged() {
     $.ajax({
-        // url: "{{ site.baseurl}}/{{ site.data }}/" + $("#selectLocation").val() + ".csv",
         url: "data/recordedData/" + $("#selectLocation").val() + ".csv",
         dataType: "text",
         success: function (data) {
-            // console.log(data);
             current_csv = csv_to_JSON(data);
-            // console.log(current_csv);
             // console.log("begin at : ", current_csv[0].date_time, "end at : ", current_csv[current_csv.length - 2].date_time);
             chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
         }
@@ -67,7 +64,6 @@ $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
         $('#graph_area').css("visibility", "visible");
-        // console.log("file : ", current_csv);
         process_input(current_csv);
     });
 });
@@ -96,7 +92,7 @@ function generate_range(data, start, end, elements) {
 
 // convert csv to json...var csv is the CSV file with headers
 function csv_to_JSON(csv) {
-    var lines = csv.split("\n");
+    var lines = csv.split(/\r?\n/g);
     var result = [];
     var headers = lines[0].split(",");
     for (var i = 1; i < lines.length; i++) {
@@ -115,7 +111,6 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
     var plot_data = [];
     var dateParts, date, timestamp, element_index, index;
     element_index = 0;
-    // console.log("file : ", raw_data);
     for (element_index = 0; element_index < elements.length; element_index++) {
         var element_plot_data = [];
         for (index = start_id - 1; index < end_id; index++) {
@@ -128,8 +123,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         }
         plot_data.push(element_plot_data);
     }
-    // console.log("elements : ", elements[element_index], elements.length);
-    console.log("plot data : ", plot_data);
+    // console.log("plot data : ", plot_data);
     generate_plot(plot_data, elements);
 
 }
@@ -241,7 +235,7 @@ $(function loadLocationsOnMap() {
         dataType: "text",
         success: function (data) {
             var markers = csv_to_JSON(data);
-            console.log("locations : ", markers);
+            // console.log("locations : ", markers);
             initMap(markers);
         }
     })
@@ -261,9 +255,8 @@ function initMap(markers) {
             map: map,
             title: name
         });
-        console.log(name);
         marker.addListener('click', function () {
-            // console.log("location clicked", marker.title);
+            console.log("location clicked", marker.title);
             locationClicked(marker.title);
         });
     }
@@ -278,7 +271,7 @@ function initMap(markers) {
 };
 
 function locationClicked(name) {
-    // console.log("location clicked", name);
+    console.log("name ", name);
     $("#selectLocation").val(name);
     locationChanged();
 }
