@@ -12,21 +12,25 @@ var current_csv;
 // automate default dates, max and min dates
 $(function () {
     $("#selectLocation").change(function () {
-        $.ajax({
-            // url: "{{ site.baseurl}}/{{ site.data }}/" + $("#selectLocation").val() + ".csv",
-            url: "data/recordedData/" + $("#selectLocation").val() + ".csv",
-            dataType: "text",
-            success: function (data) {
-                // console.log(data);
-                current_csv = csv_to_JSON(data);
-                // console.log(current_csv);
-                // console.log("begin at : ", current_csv[0].date_time, "end at : ", current_csv[current_csv.length - 2].date_time);
-                chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
-            }
-        })
+        locationChanged();
     })
         .change();
 });
+
+function locationChanged() {
+    $.ajax({
+        // url: "{{ site.baseurl}}/{{ site.data }}/" + $("#selectLocation").val() + ".csv",
+        url: "data/recordedData/" + $("#selectLocation").val() + ".csv",
+        dataType: "text",
+        success: function (data) {
+            // console.log(data);
+            current_csv = csv_to_JSON(data);
+            // console.log(current_csv);
+            // console.log("begin at : ", current_csv[0].date_time, "end at : ", current_csv[current_csv.length - 2].date_time);
+            chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
+        }
+    })
+}
 
 // choosing dates: logic
 function chooseDate(min_date, max_date) {
@@ -231,7 +235,7 @@ function showTooltip(x, y, color, contents) {
     }).appendTo("body").fadeIn(200);
 }
 
-$(function () {
+$(function loadLocationsOnMap() {
     $.ajax({
         url: "data/locations/locations.csv",
         dataType: "text",
@@ -251,26 +255,30 @@ function initMap(markers) {
     for (var i = 0; i < markers.length; i++) {
         var position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
         bounds.extend(position);
+        var name = markers[i].name;
         var marker = new google.maps.Marker({
             position: position,
             map: map,
-            title: markers[i].title
+            title: name
         });
-        marker.addListener('click', function (event, item) {
-            console.log("location clicked", item);
-            locationClicked(event, item);
+        console.log(name);
+        marker.addListener('click', function () {
+            // console.log("location clicked", marker.title);
+            locationClicked(marker.title);
         });
     }
     // Automatically center the map fitting all markers on the screen
     map.fitBounds(bounds);
 
     // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
-    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
-        this.setZoom(5);
-        google.maps.event.removeListener(boundsListener);
-    });
+    // var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
+    //     this.setZoom(8);
+    //     google.maps.event.removeListener(boundsListener);
+    // });
 };
 
-function locationClicked(event, item){
-    console.log("location clicked", event);
+function locationClicked(name) {
+    // console.log("location clicked", name);
+    $("#selectLocation").val(name);
+    locationChanged();
 }
