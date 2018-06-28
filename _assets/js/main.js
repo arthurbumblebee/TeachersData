@@ -18,37 +18,68 @@ $(function () {
 });
 
 function locationChanged() {
+    current_csv = null;
     $.ajax({
         url: "data/recordedData/" + $("#selectLocation").val() + ".csv",
         dataType: "text",
         success: function (data) {
             current_csv = csv_to_JSON(data);
-            // console.log("begin at : ", current_csv[0].date_time, "end at : ", current_csv[current_csv.length - 2].date_time);
             chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
+            // chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
         }
     })
 }
 
+function chooseDate1(min_date, max_date) {
+    var start_date = moment(min_date, 'M/DD/YYYY H:mm').format('L');
+    var end_date = moment(max_date, 'M/DD/YYYY H:mm').format('L');
+
+    $('#start_date').datepicker({
+        minDate: start_date,
+        maxDate: end_date,
+        // defaultDate: start_date
+    });
+    $('#end_date').datepicker({
+        minDate: start_date,
+        maxDate: end_date,
+        // defaultDate: end_date
+    });
+    $('#start_date').datepicker("setDate", start_date);
+    $('#end_date').datepicker("setDate", end_date);
+}
+
 // choosing dates: logic
 function chooseDate(min_date, max_date) {
+    console.log("min_date : ", min_date, "max_date : ", max_date);
+    var start_date = moment(min_date, 'M/DD/YYYY H:mm');
+    var end_date = moment(max_date, 'M/DD/YYYY H:mm');
+    // var start_date = min_date;
+    // var end_date = max_date;
+    // console.log("start_date : ", start_date, "end_date : ", end_date);
+
     // http://momentjs.com/docs/#/displaying/format/ - to see formats
     $('#start_date').datetimepicker({
         useCurrent: false,
+        format: 'L',
         ignoreReadonly: true,
-        minDate: min_date,
-        maxDate: max_date,
-        defaultDate: min_date
+        defaultDate: start_date
     });
     $('#end_date').datetimepicker({
         useCurrent: false,
+        format: 'L',
         ignoreReadonly: true,
-        minDate: min_date,
-        maxDate: max_date,
-        defaultDate: max_date
+        defaultDate: end_date
     });
 
-    $("#start_date").val(min_date);
-    $("#end_date").val(max_date);
+    start_date = start_date.format('L');
+    end_date = end_date.format('L');
+    console.log("start_date : ", start_date, "end_date : ", end_date);
+
+    $("#start_date").val(start_date);
+    $("#end_date").val(end_date);
+
+    console.log("start date new : ", $('#start_date').val());
+    console.log("end date new : ", $('#end_date').val());
 
     // disable choosing invalid dates
     $("#start_date").on("dp.change", function (e) {
@@ -75,6 +106,7 @@ function process_input(data) {
     var elements = $("input[type='checkbox']:checked").map(function () {
         return $(this).val();
     }).get();
+    console.log("start : ", start, "end : ", end);
     generate_range(data, start, end, elements);
 }
 
