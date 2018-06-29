@@ -1,6 +1,3 @@
-// ---
-// ---
-
 // map reading - https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
 // flot api - https://github.com/flot/flot/blob/master/API.md#time-series-data
 // flot toggling - http://www.jqueryflottutorial.com/jquery-flot-toggling-series-manipulation.html
@@ -13,7 +10,6 @@ var current_csv;
 $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
-        $('#graph_area').css("visibility", "visible");
         locationChanged();
     });
 });
@@ -39,7 +35,7 @@ function locationChanged() {
 }
 
 function chooseDate(min_date, max_date) {
-    console.log("min date : ", min_date, " max date : ", max_date);
+    // console.log("min date : ", min_date, " max date : ", max_date);
     $('input[name="daterange"]').daterangepicker({
         opens: 'right',
         startDate: min_date,
@@ -52,7 +48,7 @@ function chooseDate(min_date, max_date) {
         start = moment(start).add(12, 'hours');
         end = moment(end).subtract(13, 'hours').add(1, 'minutes');
         
-        console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
+        // console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
         $('#graph_area').css("visibility", "visible");
         process_input(current_csv, start, end);
     });
@@ -116,10 +112,9 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
     }
     // console.log("plot data : ", plot_data);
     generate_plot(plot_data, elements);
-
 }
 
-// plot the data
+/** PLOT FUNCTIONALITY */
 function generate_plot(plot_data, elements) {
     var data = [
         { label: elements[0], data: plot_data[0] },
@@ -220,13 +215,15 @@ function showTooltip(x, y, color, contents) {
     }).appendTo("body").fadeIn(200);
 }
 
+/* MAP FUNCTIONALITY */
+
 $(function loadLocationsOnMap() {
     $.ajax({
         url: "data/locations/locations.csv",
         dataType: "text",
         success: function (data) {
             var markers = csv_to_JSON(data);
-            console.log("locations : ", markers);
+            // console.log("locations : ", markers);
             initMap(markers);
         }
     })
