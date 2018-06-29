@@ -226,7 +226,7 @@ $(function loadLocationsOnMap() {
         dataType: "text",
         success: function (data) {
             var markers = csv_to_JSON(data);
-            // console.log("locations : ", markers);
+            console.log("locations : ", markers);
             initMap(markers);
         }
     })
