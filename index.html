@@ -1,12 +1,7 @@
 --- 
 layout: default 
---- 
-{% comment %}
-<div>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d2893380.235163087!2d-69.42630875214707!3d44.91181123055506!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1528834571632"
-        width="100%" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
-</div> 
-{% endcomment %}
+---
+
 <div id="map" style="width:100%;height:400px"></div>
 <div>
     <form class="form-horizontal col-md-6" action="" role="form">
@@ -27,19 +22,8 @@ layout: default
         </div>
         <div class="row">
             <label>Select date range</label>
-            <div class="form-group form-group-sm">
-                <label class="col-sm-1 control-label" for="start_date">From:</label>
-                <div class="col-sm-10">
-                    <input class="form-control" type="text" id="start_date" style="width:75%;">
-                </div>
-            </div>
-            <div class="form-group form-group-sm">
-                <label class="col-sm-1 control-label" for="end_date">To:</label>
-                <div class="col-sm-10">
-                    <input class="form-control" type="text" id="end_date" style="width:75%;">
-                </div>
-            </div>
-            {% comment %} placeholder="MM/DD/YYYY hh:mm a" value="7/16/2014 11:00 PM" {% endcomment %}
+            <input class="form-control" type="text" name="daterange" style="width:75%;" />
+            <br>
             <div class="form-group text-center">
                 <button class="btn btn-success" name="submit" type="submit">Submit</button>
             </div>

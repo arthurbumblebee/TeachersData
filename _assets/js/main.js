@@ -9,6 +9,15 @@
 
 var current_csv;
 
+// process data
+$(function () {
+    $("form").submit(function (e) {
+        e.preventDefault();
+        $('#graph_area').css("visibility", "visible");
+        locationChanged();
+    });
+});
+
 // automate default dates, max and min dates
 $(function () {
     $("#selectLocation").change(function () {
@@ -25,88 +34,38 @@ function locationChanged() {
         success: function (data) {
             current_csv = csv_to_JSON(data);
             chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
-            // chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
         }
     })
 }
 
-function chooseDate1(min_date, max_date) {
-    var start_date = moment(min_date, 'M/DD/YYYY H:mm').format('L');
-    var end_date = moment(max_date, 'M/DD/YYYY H:mm').format('L');
-
-    $('#start_date').datepicker({
-        minDate: start_date,
-        maxDate: end_date,
-        // defaultDate: start_date
-    });
-    $('#end_date').datepicker({
-        minDate: start_date,
-        maxDate: end_date,
-        // defaultDate: end_date
-    });
-    $('#start_date').datepicker("setDate", start_date);
-    $('#end_date').datepicker("setDate", end_date);
-}
-
-// choosing dates: logic
 function chooseDate(min_date, max_date) {
-    console.log("min_date : ", min_date, "max_date : ", max_date);
-    var start_date = moment(min_date, 'M/DD/YYYY H:mm');
-    var end_date = moment(max_date, 'M/DD/YYYY H:mm');
-    // var start_date = min_date;
-    // var end_date = max_date;
-    // console.log("start_date : ", start_date, "end_date : ", end_date);
+    console.log("min date : ", min_date, " max date : ", max_date);
+    $('input[name="daterange"]').daterangepicker({
+        opens: 'right',
+        startDate: min_date,
+        endDate: max_date,
+        minDate: min_date,
+        maxDate: max_date,
+        autoApply: true
 
-    // http://momentjs.com/docs/#/displaying/format/ - to see formats
-    $('#start_date').datetimepicker({
-        useCurrent: false,
-        format: 'L',
-        ignoreReadonly: true,
-        defaultDate: start_date
-    });
-    $('#end_date').datetimepicker({
-        useCurrent: false,
-        format: 'L',
-        ignoreReadonly: true,
-        defaultDate: end_date
-    });
-
-    start_date = start_date.format('L');
-    end_date = end_date.format('L');
-    console.log("start_date : ", start_date, "end_date : ", end_date);
-
-    $("#start_date").val(start_date);
-    $("#end_date").val(end_date);
-
-    console.log("start date new : ", $('#start_date').val());
-    console.log("end date new : ", $('#end_date').val());
-
-    // disable choosing invalid dates
-    $("#start_date").on("dp.change", function (e) {
-        $('#end_date').data("DateTimePicker").minDate(e.date);
-    });
-    $("#end_date").on("dp.change", function (e) {
-        $('#start_date').data("DateTimePicker").maxDate(e.date);
+    }, function (start, end, label) {
+        start = moment(start).add(12, 'hours');
+        end = moment(end).subtract(13, 'hours').add(1, 'minutes');
+        
+        console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
+        $('#graph_area').css("visibility", "visible");
+        process_input(current_csv, start, end);
     });
 }
-
-// process data
-$(function () {
-    $("form").submit(function (e) {
-        e.preventDefault();
-        $('#graph_area').css("visibility", "visible");
-        process_input(current_csv);
-    });
-});
 
 // process the given input from the client
-function process_input(data) {
-    var start = moment($("#start_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
-    var end = moment($("#end_date").val(), 'MM/DD/YYYY hh:mm a').format('M/D/YYYY H:mm');
+function process_input(data, start, end) {
+    start = start.format('M/D/YYYY H:mm');
+    end = end.format('M/D/YYYY H:mm');
     var elements = $("input[type='checkbox']:checked").map(function () {
         return $(this).val();
     }).get();
-    console.log("start : ", start, "end : ", end);
+    console.log("start : ", start, "end : ", end, "elements : ", elements);
     generate_range(data, start, end, elements);
 }
 
