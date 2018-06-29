@@ -4,22 +4,28 @@
 // https://plot.ly
 // ajax jekyll tutorial - http://frontendcollisionblog.com/javascript/jekyll/tutorial/2015/03/26/getting-started-with-a-search-engine-for-your-site-no-server-required.html
 
-var current_csv;
+var current_csv, start_date, end_date;
 
 // process data
 $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
-        locationChanged();
+        process_input(current_csv, start_date, end_date);
     });
+
+});
+
+$(function () {
+    $("input[type='checkbox']").change(function () {
+        process_input(current_csv, start_date, end_date);
+    }).change();
 });
 
 // automate default dates, max and min dates
 $(function () {
     $("#selectLocation").change(function () {
         locationChanged();
-    })
-        .change();
+    }).change();
 });
 
 function locationChanged() {
@@ -45,12 +51,12 @@ function chooseDate(min_date, max_date) {
         autoApply: true
 
     }, function (start, end, label) {
-        start = moment(start).add(12, 'hours');
-        end = moment(end).subtract(13, 'hours').add(1, 'minutes');
+        start_date = moment(start).add(12, 'hours');
+        end_date = moment(end).subtract(13, 'hours').add(1, 'minutes');
         
         // console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
         $('#graph_area').css("visibility", "visible");
-        process_input(current_csv, start, end);
+        process_input(current_csv, start_date, end_date);
     });
 }
 
@@ -110,7 +116,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         }
         plot_data.push(element_plot_data);
     }
-    // console.log("plot data : ", plot_data);
+    console.log("plot data : ", plot_data);
     generate_plot(plot_data, elements);
 }
 
@@ -171,9 +177,8 @@ function generate_plot(plot_data, elements) {
     $("#graph_placeholder").UseTooltip();
 }
 
-var previousPoint = null, previousLabel = null;
-
 $.fn.UseTooltip = function () {
+    var previousPoint = null, previousLabel = null;
     $(this).bind(("plotclick", "plothover"), function (event, pos, item) {
         if (item) {
             if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
@@ -215,8 +220,7 @@ function showTooltip(x, y, color, contents) {
     }).appendTo("body").fadeIn(200);
 }
 
-/* MAP FUNCTIONALITY */
-
+/** MAP FUNCTIONALITY */
 $(function loadLocationsOnMap() {
     $.ajax({
         url: "data/locations/locations.csv",
@@ -266,4 +270,27 @@ function locationClicked(name) {
     console.log("name ", name);
     $("#selectLocation").val(name);
     locationChanged();
+}
+
+
+function doToggling(dataCollection, labelCollection, options) {
+    console.log("dataCollection : ", dataCollection, "labelCollection : ", labelCollection);
+    var dataSet = [];
+    $("#ToggleController").find("input[type='checkbox']").each(function () {
+        if ($(this).is(":checked")) {
+            var position = $(this).attr("id").replace("chkData", "");
+            position = parseInt(position) - 1;
+            console.log("pos : ", position);
+            dataSet.push(
+                {
+                    label: labelCollection[position],
+                    data: dataCollection[position]
+                }
+            );
+        }
+    });
+
+    console.log("dataset : ", dataSet);
+    $.plot($("#flot-placeholder"), dataSet, options);
+    // $("#graph_placeholder").UseTooltip();
 }
