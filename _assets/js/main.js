@@ -165,7 +165,7 @@ function generate_plot(plot_data, elements) {
         legend: {
             noColumns: 1,
             labelBoxBorderColor: "white",
-            position: "ne"
+            position: "nw"
         },
         grid: {
             hoverable: true,
