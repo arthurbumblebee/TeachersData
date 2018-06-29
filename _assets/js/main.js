@@ -24,6 +24,7 @@ $(function () {
 // automate default dates, max and min dates
 $(function () {
     $("#selectLocation").change(function () {
+        $('#graph_area').css("visibility", "hidden");
         locationChanged();
     }).change();
 });
@@ -41,7 +42,8 @@ function locationChanged() {
 }
 
 function chooseDate(min_date, max_date) {
-    // console.log("min date : ", min_date, " max date : ", max_date);
+    console.log("min date : ", min_date, " max date : ", max_date);
+
     $('input[name="daterange"]').daterangepicker({
         opens: 'right',
         startDate: min_date,
@@ -53,11 +55,13 @@ function chooseDate(min_date, max_date) {
     }, function (start, end, label) {
         start_date = moment(start).add(12, 'hours');
         end_date = moment(end).subtract(13, 'hours').add(1, 'minutes');
-        
-        // console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
-        $('#graph_area').css("visibility", "visible");
+
+        console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
         process_input(current_csv, start_date, end_date);
     });
+
+    start_date = moment($('#daterange').data('daterangepicker').startDate).add(12, 'hours');
+    end_date = moment($('#daterange').data('daterangepicker').endDate).subtract(13, 'hours').add(1, 'minutes');
 }
 
 // process the given input from the client
@@ -116,7 +120,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         }
         plot_data.push(element_plot_data);
     }
-    console.log("plot data : ", plot_data);
+    // console.log("plot data : ", plot_data);
     generate_plot(plot_data, elements);
 }
 
@@ -173,6 +177,7 @@ function generate_plot(plot_data, elements) {
         colors: ["rgb(238, 178, 50)", "rgb(50, 216, 238)"]
     };
 
+    $('#graph_area').css("visibility", "visible");
     $.plot("#graph_placeholder", data, options);
     $("#graph_placeholder").UseTooltip();
 }
@@ -270,27 +275,4 @@ function locationClicked(name) {
     console.log("name ", name);
     $("#selectLocation").val(name);
     locationChanged();
-}
-
-
-function doToggling(dataCollection, labelCollection, options) {
-    console.log("dataCollection : ", dataCollection, "labelCollection : ", labelCollection);
-    var dataSet = [];
-    $("#ToggleController").find("input[type='checkbox']").each(function () {
-        if ($(this).is(":checked")) {
-            var position = $(this).attr("id").replace("chkData", "");
-            position = parseInt(position) - 1;
-            console.log("pos : ", position);
-            dataSet.push(
-                {
-                    label: labelCollection[position],
-                    data: dataCollection[position]
-                }
-            );
-        }
-    });
-
-    console.log("dataset : ", dataSet);
-    $.plot($("#flot-placeholder"), dataSet, options);
-    // $("#graph_placeholder").UseTooltip();
 }
