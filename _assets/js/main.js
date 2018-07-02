@@ -8,23 +8,23 @@
 var current_csv, start_date, end_date;
 
 // process data
-$(function () {
-    $("form").submit(function (e) {
+$(function() {
+    $("form").submit(function(e) {
         e.preventDefault();
         process_input(current_csv, start_date, end_date);
     });
 
 });
 
-$(function () {
-    $("input[type='checkbox']").change(function () {
+$(function() {
+    $("input[type='checkbox']").change(function() {
         process_input(current_csv, start_date, end_date);
     }).change();
 });
 
 // automate default dates, max and min dates
-$(function () {
-    $("#selectLocation").change(function () {
+$(function() {
+    $("#selectLocation").change(function() {
         $('#graph_area').css("visibility", "hidden");
         locationChanged();
     }).change();
@@ -35,7 +35,7 @@ function locationChanged() {
     $.ajax({
         url: "data/recordedData/" + $("#selectLocation").val() + ".csv",
         dataType: "text",
-        success: function (data) {
+        success: function(data) {
             current_csv = csv_to_JSON(data);
             chooseDate(current_csv[0].date_time, current_csv[current_csv.length - 2].date_time);
         }
@@ -53,7 +53,7 @@ function chooseDate(min_date, max_date) {
         maxDate: max_date,
         autoApply: true
 
-    }, function (start, end, label) {
+    }, function(start, end, label) {
         start_date = moment(start).add(12, 'hours');
         end_date = moment(end).subtract(13, 'hours').add(1, 'minutes');
 
@@ -69,7 +69,7 @@ function chooseDate(min_date, max_date) {
 function process_input(data, start, end) {
     start = start.format('M/D/YYYY H:mm');
     end = end.format('M/D/YYYY H:mm');
-    var elements = $("input[type='checkbox']:checked").map(function () {
+    var elements = $("input[type='checkbox']:checked").map(function() {
         return $(this).val();
     }).get();
     console.log("start : ", start, "end : ", end, "elements : ", elements);
@@ -181,10 +181,10 @@ function generate_plot(plot_data, elements) {
     $("#graph_placeholder").UseTooltip();
 }
 
-$.fn.UseTooltip = function () {
+$.fn.UseTooltip = function() {
     var previousPoint = null,
         previousLabel = null;
-    $(this).bind(("plotclick", "plothover"), function (event, pos, item) {
+    $(this).bind(("plotclick", "plothover"), function(event, pos, item) {
         if (item) {
             if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
                 previousPoint = item.dataIndex;
@@ -230,7 +230,7 @@ $(function loadLocationsOnMap() {
     $.ajax({
         url: "data/locations/locations.csv",
         dataType: "text",
-        success: function (data) {
+        success: function(data) {
             var markers = csv_to_JSON(data);
             // console.log("locations : ", markers);
             initMap(markers);
@@ -266,7 +266,7 @@ function initMap(markers) {
 }
 
 function attachMarker(marker) {
-    marker.addListener('click', function () {
+    marker.addListener('click', function() {
         locationClicked(marker.title);
     });
 }
@@ -280,8 +280,20 @@ function locationClicked(name) {
 /** DOWNLOAD */
 // fix resource interpretation error
 $(function downloadFile() {
-    $('#download').click(function (e) {
+    $('#download').click(function(e) {
         e.preventDefault();
         window.location.href = "data/recordedData/" + $("#selectLocation").val() + ".csv";
     })
-})
+});
+
+/** UPLOAD */
+$(function() {
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function(e, data) {
+            $.each(data.result.files, function(index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });
+        }
+    });
+});
