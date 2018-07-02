@@ -278,6 +278,7 @@ function locationClicked(name) {
 }
 
 /** DOWNLOAD */
+// fix resource interpretation error
 $(function downloadFile() {
     $('#download').click(function (e) {
         e.preventDefault();

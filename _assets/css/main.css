@@ -93,7 +93,8 @@ a.navbar-brand {
     font-family: 'dinot';
     color: white !important;
     text-decoration: none !important;
-    font-size: 3.5em;
+    padding: 12px 10px;
+    font-size: 3.0em;
 }
 
 a.navbar-brand:active, a.navbar-brand:visited, a.navbar-brand:active, a.navbar-brand:focus {
@@ -105,7 +106,7 @@ a.navbar-brand:hover {
 }
 
 .navbar-default .navbar-nav>li {
-    padding-top: 15px;
+    padding-top: 10px;
 }
 
 .navbar-default .navbar-nav>li>a, .navbar-default .navbar-nav>li>a:focus {
