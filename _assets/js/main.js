@@ -25,7 +25,7 @@ $(function() {
 // automate default dates, max and min dates
 $(function() {
     $("#selectLocation").change(function() {
-        $('#graph_area').css("visibility", "hidden");
+        // $('#graph_area').css("visibility", "hidden");
         locationChanged();
     }).change();
 });
@@ -63,6 +63,8 @@ function chooseDate(min_date, max_date) {
 
     start_date = moment($('#daterange').data('daterangepicker').startDate).add(12, 'hours');
     end_date = moment($('#daterange').data('daterangepicker').endDate).subtract(13, 'hours').add(1, 'minutes');
+    process_input(current_csv, start_date, end_date);
+
 }
 
 // process the given input from the client
