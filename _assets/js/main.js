@@ -18,6 +18,10 @@ $(function() {
 
 $(function() {
     $("input[type='checkbox']").change(function() {
+        // always make sure one is checked
+        if(!$("#temperature").prop("checked") & !$("#light_intensity").prop("checked")){
+            $("#temperature").prop('checked', true);
+        }
         process_input(current_csv, start_date, end_date);
     }).change();
 });
