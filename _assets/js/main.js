@@ -128,10 +128,11 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         plot_data.push(element_plot_data);
     }
     // console.log("plot data : ", plot_data);
-    elements = $.map(elements, function(element){
-        return (element.replace(/^\w/, c => c.toUpperCase()));
-    } )
-    console.log("elements : ", elements);
+    // format headers (capitalization)
+    elements = $.map(elements, function (element) {
+        return element.includes('_') ? (element.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, c => c.toUpperCase())) : (element.replace(/^\w/, c => c.toUpperCase()));
+    })
+    // console.log("elements : ", elements);
     generate_plot(plot_data, elements);
 }
 
