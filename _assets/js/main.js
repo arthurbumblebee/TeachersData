@@ -96,6 +96,7 @@ function generate_range(data, start, end, elements) {
 
 // convert csv to json...var csv is the CSV file with headers
 function csv_to_JSON(csv) {
+    csv = csv.trim();
     var lines = csv.split(/\r?\n/g);
     var result = [];
     var headers = lines[0].split(",");
@@ -242,8 +243,9 @@ $(function loadLocationsOnMap() {
         url: "data/locations/locations.csv",
         dataType: "text",
         success: function (data) {
+            console.log("raw data : ", data);
             var markers = csv_to_JSON(data);
-            // console.log("locations : ", markers);
+            console.log("locations : ", markers);
             initMap(markers);
         }
     })
@@ -257,11 +259,11 @@ function initMap(markers) {
     for (var i = 0; i < markers.length; i++) {
         var position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
         bounds.extend(position);
-        var name = markers[i].name;
+        var location = markers[i].location;
         var marker = new google.maps.Marker({
             position: position,
             map: map,
-            title: name
+            title: location
         });
         attachMarker(marker);
 
@@ -282,9 +284,9 @@ function attachMarker(marker) {
     });
 }
 
-function locationClicked(name) {
-    console.log("name ", name);
-    $("#selectLocation").val(name);
+function locationClicked(location) {
+    console.log("location ", location);
+    $("#selectLocation").val(location);
     locationChanged();
 }
 
