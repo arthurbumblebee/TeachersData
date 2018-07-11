@@ -7,13 +7,16 @@
 
 var current_csv, start_date, end_date;
 
+// prepopulate selection locations
+$(function () {
+
+});
 // process data
 $(function () {
     $("form").submit(function (e) {
         e.preventDefault();
         process_input(current_csv, start_date, end_date);
     });
-
 });
 
 $(function () {
@@ -243,7 +246,7 @@ $(function loadLocationsOnMap() {
         url: "data/locations/locations.csv",
         dataType: "text",
         success: function (data) {
-            console.log("raw data : ", data);
+            // console.log("raw data : ", data);
             var markers = csv_to_JSON(data);
             console.log("locations : ", markers);
             initMap(markers);
@@ -260,6 +263,12 @@ function initMap(markers) {
         var position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
         bounds.extend(position);
         var location = markers[i].location;
+        // populate locations in dropdown menu
+        $('#selectLocation').append($('<option>', {
+            value: location,
+            text: location
+        }));
+        // put markers onto map
         var marker = new google.maps.Marker({
             position: position,
             map: map,
