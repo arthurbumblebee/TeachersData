@@ -117,13 +117,13 @@ function chooseDate(min_date, max_date) {
 
     $('input[name="daterange"]').daterangepicker({
         timePicker: true,
+        timePicker24Hour: true,
         opens: 'right',
         startDate: min,
         endDate: max,
         minDate: min,
         maxDate: max,
         autoApply: true
-
     }
         , function (start, end, label) {
             start_date = moment(start);
@@ -135,7 +135,6 @@ function chooseDate(min_date, max_date) {
     start_date = moment($('#daterange').data('daterangepicker').startDate);
     end_date = moment($('#daterange').data('daterangepicker').endDate);
     process_input(current_csv, start_date, end_date);
-
 }
 
 // process the given input from the client
@@ -186,7 +185,8 @@ function csv_to_JSON(csv) {
 function generate_data_to_plot(raw_data, start_id, end_id, elements) {
     console.log("raw data : ", raw_data[0]["date_time"], raw_data.length);
     var plot_data = [];
-    var dateParts, date, timestamp, element_index, index;
+    // var dateParts;
+    var date, timestamp, element_index, index;
     element_index = 0;
     for (element_index = 0; element_index < elements.length; element_index++) {
         var element_plot_data = [];
@@ -201,7 +201,7 @@ function generate_data_to_plot(raw_data, start_id, end_id, elements) {
         }
         plot_data.push(element_plot_data);
     }
-    console.log("plot data : ", plot_data);
+    // console.log("plot data : ", plot_data);
     // console.log("dateParts : ", dateParts);
 
     // format headers (capitalizating first letter)
