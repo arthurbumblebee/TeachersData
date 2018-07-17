@@ -5,12 +5,71 @@
 // ajax jekyll tutorial - http://frontendcollisionblog.com/javascript/jekyll/tutorial/2015/03/26/getting-started-with-a-search-engine-for-your-site-no-server-required.html
 // datepicker - http://www.daterangepicker.com
 
+// make sure the place name is available on page load
+
 var current_csv, start_date, end_date;
 
-// prepopulate selection locations
+/** MAP FUNCTIONALITY */
+// loadLocationsOnMap
 $(function () {
-
+    $.ajax({
+        url: "data/locations/locations.csv",
+        dataType: "text",
+        success: function (data) {
+            // console.log("raw data : ", data);
+            var markers = csv_to_JSON(data);
+            console.log("locations : ", markers);
+            initMap(markers);
+            locationChanged();
+        }
+    });
 });
+
+function initMap(markers) {
+    var bounds = new google.maps.LatLngBounds();
+    var mapDiv = document.getElementById('map');
+    var map = new google.maps.Map(mapDiv, { zoom: 8 });
+
+    for (var i = 0; i < markers.length; i++) {
+        var position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
+        bounds.extend(position);
+        var location = markers[i].location;
+        // populate locations in dropdown menu
+        $('#selectLocation').append($('<option>', {
+            value: location,
+            text: location
+        }));
+        // put markers onto map
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: location
+        });
+        attachMarker(marker);
+
+    }
+    // Automatically center the map fitting all markers on the screen
+    map.fitBounds(bounds);
+
+    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    // var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
+    //     this.setZoom(8);
+    //     google.maps.event.removeListener(boundsListener);
+    // });
+}
+
+function attachMarker(marker) {
+    marker.addListener('click', function () {
+        locationClicked(marker.title);
+    });
+}
+
+function locationClicked(location) {
+    console.log("location ", location);
+    $("#selectLocation").val(location);
+    locationChanged();
+}
+
 // process data
 $(function () {
     $("form").submit(function (e) {
@@ -21,12 +80,13 @@ $(function () {
 
 $(function () {
     $("input[type='checkbox']").change(function () {
-        // always make sure one is checked
+        // always make sure one element is checked
         if (!$("#temperature").prop("checked") & !$("#light_intensity").prop("checked")) {
             $("#temperature").prop('checked', true);
         }
         process_input(current_csv, start_date, end_date);
-    }).change();
+    });
+    // .change();
 });
 
 // automate default dates, max and min dates
@@ -34,7 +94,8 @@ $(function () {
     $("#selectLocation").change(function () {
         // $('#graph_area').css("visibility", "hidden");
         locationChanged();
-    }).change();
+    });
+    // .change();
 });
 
 function locationChanged() {
@@ -50,34 +111,40 @@ function locationChanged() {
 }
 
 function chooseDate(min_date, max_date) {
-    console.log("min date : ", min_date, " max date : ", max_date);
+    console.log("min date :", min_date, " max date :", max_date);
+    var min = moment(min_date);
+    var max = moment(max_date);
 
     $('input[name="daterange"]').daterangepicker({
+        timePicker: true,
         opens: 'right',
-        startDate: min_date,
-        endDate: max_date,
-        minDate: min_date,
-        maxDate: max_date,
+        startDate: min,
+        endDate: max,
+        minDate: min,
+        maxDate: max,
         autoApply: true
 
-    }, function (start, end, label) {
-        start_date = moment(start).add(12, 'hours');
-        end_date = moment(end).subtract(13, 'hours').add(1, 'minutes');
+    }
+        , function (start, end, label) {
+            start_date = moment(start);
+            end_date = moment(end);
+            console.log("A new date selection was made: " + start.format("YYYY-MM-DD HH:mm:ss") + ' to ' + end.format("YYYY-MM-DD HH:mm:ss"));
+            process_input(current_csv, start_date, end_date);
+        });
 
-        // console.log("A new date selection was made: " + start.format('L') + ' to ' + end.format('L'));
-        process_input(current_csv, start_date, end_date);
-    });
-
-    start_date = moment($('#daterange').data('daterangepicker').startDate).add(12, 'hours');
-    end_date = moment($('#daterange').data('daterangepicker').endDate).subtract(13, 'hours').add(1, 'minutes');
+    start_date = moment($('#daterange').data('daterangepicker').startDate);
+    end_date = moment($('#daterange').data('daterangepicker').endDate);
     process_input(current_csv, start_date, end_date);
 
 }
 
 // process the given input from the client
 function process_input(data, start, end) {
-    start = start.format('M/D/YYYY H:mm');
-    end = end.format('M/D/YYYY H:mm');
+    console.log("start raw : ", start, "end raw : ", end);
+
+    start = start.format("YYYY-MM-DD HH:mm:ss");
+    end = end.format("YYYY-MM-DD HH:mm:ss");
+
     var elements = $("input[type='checkbox']:checked").map(function () {
         return $(this).val();
     }).get();
@@ -94,6 +161,7 @@ function generate_range(data, start, end, elements) {
             var end_id = data[index]["#"];
         }
     }
+    console.log("start_id : ", start_id, "end_id", end_id);
     generate_data_to_plot(data, start_id, end_id, elements);
 }
 
@@ -116,23 +184,27 @@ function csv_to_JSON(csv) {
 
 // generate the data to plot
 function generate_data_to_plot(raw_data, start_id, end_id, elements) {
+    console.log("raw data : ", raw_data[0]["date_time"], raw_data.length);
     var plot_data = [];
     var dateParts, date, timestamp, element_index, index;
     element_index = 0;
     for (element_index = 0; element_index < elements.length; element_index++) {
         var element_plot_data = [];
-        for (index = start_id - 1; index < end_id; index++) {
+        for (index = start_id - start_id; index < end_id - start_id; index++) {
             var data_point = [];
-            dateParts = raw_data[index]["date_time"].match(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/);
-            date = new Date(dateParts[3], dateParts[1] - 1, dateParts[2], dateParts[4], dateParts[5]);
+            // dateParts = raw_data[index]["date_time"].match(/(\d+)\-(\d+)\-(\d+) (\d+):(\d+):(\d+)/);
+            // date = new Date(dateParts[3], dateParts[1] - 1, dateParts[2], dateParts[4], dateParts[5]);
+            date = new Date(raw_data[index]["date_time"]);
             timestamp = date.getTime() * 1;
             data_point.push(timestamp, parseFloat(raw_data[index][elements[element_index]], 10));
             element_plot_data.push(data_point);
         }
         plot_data.push(element_plot_data);
     }
-    // console.log("plot data : ", plot_data);
-    // format headers (capitalization)
+    console.log("plot data : ", plot_data);
+    // console.log("dateParts : ", dateParts);
+
+    // format headers (capitalizating first letter)
     elements = $.map(elements, function (element) {
         return element.includes('_') ? (element.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, c => c.toUpperCase())) : (element.replace(/^\w/, c => c.toUpperCase()));
     })
@@ -238,65 +310,6 @@ function showTooltip(x, y, color, contents) {
         left: x - 70,
         border: '2px solid ' + color,
     }).appendTo("body").fadeIn(200);
-}
-
-/** MAP FUNCTIONALITY */
-$(function loadLocationsOnMap() {
-    $.ajax({
-        url: "data/locations/locations.csv",
-        dataType: "text",
-        success: function (data) {
-            // console.log("raw data : ", data);
-            var markers = csv_to_JSON(data);
-            console.log("locations : ", markers);
-            initMap(markers);
-        }
-    })
-});
-
-function initMap(markers) {
-    var bounds = new google.maps.LatLngBounds();
-    var mapDiv = document.getElementById('map');
-    var map = new google.maps.Map(mapDiv, { zoom: 8 });
-
-    for (var i = 0; i < markers.length; i++) {
-        var position = new google.maps.LatLng(markers[i].latitude, markers[i].longitude);
-        bounds.extend(position);
-        var location = markers[i].location;
-        // populate locations in dropdown menu
-        $('#selectLocation').append($('<option>', {
-            value: location,
-            text: location
-        }));
-        // put markers onto map
-        var marker = new google.maps.Marker({
-            position: position,
-            map: map,
-            title: location
-        });
-        attachMarker(marker);
-
-    }
-    // Automatically center the map fitting all markers on the screen
-    map.fitBounds(bounds);
-
-    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
-    // var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
-    //     this.setZoom(8);
-    //     google.maps.event.removeListener(boundsListener);
-    // });
-}
-
-function attachMarker(marker) {
-    marker.addListener('click', function () {
-        locationClicked(marker.title);
-    });
-}
-
-function locationClicked(location) {
-    console.log("location ", location);
-    $("#selectLocation").val(location);
-    locationChanged();
 }
 
 /** DOWNLOAD */
