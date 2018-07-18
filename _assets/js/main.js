@@ -1,3 +1,11 @@
+/**
+ * 
+Filename: main.js
+Project: Teacher's Data
+Authors: Arthur Makumbi
+Description: defines how the page responds to various user interactions e.g clicking on the map,
+selecting date range etc
+ */
 // map reading - https://learn.cloudcannon.com/jekyll/introduction-to-data-files/
 // flot api - https://github.com/flot/flot/blob/master/API.md#time-series-data
 // flot toggling - http://www.jqueryflottutorial.com/jquery-flot-toggling-series-manipulation.html
