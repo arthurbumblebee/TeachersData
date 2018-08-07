@@ -12,6 +12,7 @@ selecting date range etc
 // https://plot.ly
 // ajax jekyll tutorial - http://frontendcollisionblog.com/javascript/jekyll/tutorial/2015/03/26/getting-started-with-a-search-engine-for-your-site-no-server-required.html
 // datepicker - http://www.daterangepicker.com
+// svg plotting -- https://css-tricks.com/how-to-make-charts-with-svg/
 
 // make sure the place name is available on page load
 
